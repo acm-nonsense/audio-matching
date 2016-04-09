@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pylab
 
 # Read file to get samplerate and numpy array containing the signal 
-(fs, x) = read("../someaudio.wav")
+(fs, x) = read("../samples/layers.wav")
 
 
 channels = [
