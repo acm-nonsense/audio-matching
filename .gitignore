@@ -2,3 +2,5 @@
 .pyc
 spectrograms/*
 .mp3
+.png
+.npz
