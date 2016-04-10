@@ -27,7 +27,7 @@ channel =  np.mean(channels, axis=0)
 N_SAMPLES = np.shape(channel)[0]
 SAMPLE_RATE = 44100
 LENGTH_SECONDS = N_SAMPLES/SAMPLE_RATE
-WINDOW_LENGTH_SECONDS = 5
+WINDOW_LENGTH_SECONDS = 2
 WINDOW_INTERVAL = 1 # In seconds
 WINDOW_LENGTH_SAMPLES = WINDOW_LENGTH_SECONDS * SAMPLE_RATE
 
@@ -40,7 +40,7 @@ print("Created channel windows.")
 print 'Generating spectrograms: ',
 
 
-SPECTRUM_WIDTH = 1721
+SPECTRUM_WIDTH = 688
 SPECTRUM_HEIGHT = 129
 spectrograms = np.ndarray((0,SPECTRUM_HEIGHT,SPECTRUM_WIDTH))
 for i,window in enumerate(channel_windows):
@@ -48,7 +48,7 @@ for i,window in enumerate(channel_windows):
 	spectrum, freqs, bins, plot = pylab.specgram(
 		window,
 		NFFT=256, 
-		Fs=44100, 
+		Fs=44100,
 		detrend=pylab.detrend_none,
 		window=pylab.window_hanning,
 		noverlap=int(256 * 0.5))
@@ -71,8 +71,3 @@ np.save(specs,spectrograms)
 np.save(bins,bins_static)
 np.save(freqs,freqs_static)
 print 'Done.'
-
-print(bins_static.shape)
-print(freqs_static.shape)
-print(spectrograms[0].shape)
-plt.pcolormesh(bins_static, freqs_static, 10*np.log10(spectrograms[0]))

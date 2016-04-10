@@ -24,14 +24,19 @@ h = spectrograms.shape[1]
 w = spectrograms.shape[2]
 
 data = spectrograms.reshape((n_samples,h*w))
-n_components = 15
+n_components = 100
 
-print("Extracting the top %d eigenfaces from %d windows..." % (n_components, n_samples))
+print("Extracting the top %d eigensounds from %d windows..." % (n_components, n_samples))
 t0 = time()
 pca = RandomizedPCA(n_components=n_components, whiten=True).fit(data)
 print("Done in %0.3fs." % (time() - t0))
 
-eigensounds = pca.components_.reshape((n_components, h, w))
+figure = plt.figure()
+plt.plot(map(lambda v:  norm(v), pca.components_))
+figure.savefig('../pca.png')
+plt.close()
+
+# eigensounds = pca.components_.reshape((n_components, h, w))
 
 # figure = plt.figure()
 # plt.imshow(eigensounds[0])
@@ -52,7 +57,7 @@ t0 = time()
 pca_projected_data = pca.transform(data)
 print("Done in %0.3fs." % (time() - t0))
 
-n_clusters = 50
+n_clusters = 20
 
 print("Computing clustering for each PCA projected window...")
 t0 = time()
@@ -60,7 +65,7 @@ clusterings = map(lambda sample: MiniBatchKMeans(n_clusters=n_clusters).fit(pca_
 print("Done in %0.3fs." % (time() - t0))
 
 
-target_window_index = 122
+target_window_index = 9
 
 print("Computing closest window to specified target window...")
 t0 = time()
@@ -69,4 +74,7 @@ distances_to_target_clustering = map(lambda sample_clustering: norm(sample_clust
 print("Done in %0.3fs." % (time() - t0))
 
 # indexed_distances = np.stack((distances_to_target_clustering,np.arange(len(distances_to_target_clustering))),1)
-print(distances_to_target_clustering)
+figure = plt.figure()
+plt.plot(distances_to_target_clustering)
+figure.savefig('../distances.png')
+plt.close()
