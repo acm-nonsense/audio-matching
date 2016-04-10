@@ -32,7 +32,7 @@ WINDOW_INTERVAL = 1 # In seconds
 WINDOW_LENGTH_SAMPLES = WINDOW_LENGTH_SECONDS * SAMPLE_RATE
 
 channel_windows = []
-for i in range(LENGTH_SECONDS/WINDOW_INTERVAL):
+for i in range(LENGTH_SECONDS/WINDOW_INTERVAL-WINDOW_LENGTH_SECONDS):
 	channel_windows.append(channel[SAMPLE_RATE*i:SAMPLE_RATE*(i+WINDOW_LENGTH_SECONDS)])
 
 print("Created channel windows.")
@@ -44,7 +44,7 @@ SPECTRUM_WIDTH = 1721
 SPECTRUM_HEIGHT = 129
 spectrograms = np.ndarray((0,SPECTRUM_HEIGHT,SPECTRUM_WIDTH))
 for i,window in enumerate(channel_windows):
-	figure = plt.figure()
+	# figure = plt.figure()
 	spectrum, freqs, bins, plot = pylab.specgram(
 		window,
 		NFFT=256, 
@@ -56,12 +56,12 @@ for i,window in enumerate(channel_windows):
 		bins_static = bins
 		freqs_static = freqs
 	# plt.pcolormesh(bins, freqs, 10*np.log10(spectrum))
-	figure.savefig('../spectrograms/anb-{}.png'.format(i))
+	# figure.savefig('../spectrograms/anb-{}.png'.format(i))
 	full_dim_spectrum = np.ndarray((1,SPECTRUM_HEIGHT,SPECTRUM_WIDTH))
-	if np.shape(spectrograms)[1:3] == np.shape(spectrum)[0:2]:
-		full_dim_spectrum[0] = spectrum
-		spectrograms = np.concatenate((spectrograms,full_dim_spectrum))
-	plt.close()
+	# if np.shape(spectrograms)[1:3] == np.shape(spectrum)[0:2]:
+	full_dim_spectrum[0] = spectrum[:129,:1721]
+	spectrograms = np.concatenate((spectrograms,full_dim_spectrum))
+	# plt.close()
 	print "{0:2.0f}%\b\b\b\b".format(100*float(i)/len(channel_windows)),
 	sys.stdout.flush()
 specs = open('{}.specs.npz'.format(sys.argv[1]), 'w')
