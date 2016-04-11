@@ -27,7 +27,7 @@ channel =  np.mean(channels, axis=0)
 N_SAMPLES = np.shape(channel)[0]
 SAMPLE_RATE = 44100
 LENGTH_SECONDS = N_SAMPLES/SAMPLE_RATE
-WINDOW_LENGTH_SECONDS = 2
+WINDOW_LENGTH_SECONDS = 5
 WINDOW_INTERVAL = 1 # In seconds
 WINDOW_LENGTH_SAMPLES = WINDOW_LENGTH_SECONDS * SAMPLE_RATE
 
@@ -40,7 +40,7 @@ print("Created channel windows.")
 print 'Generating spectrograms: ',
 
 
-SPECTRUM_WIDTH = 688
+SPECTRUM_WIDTH = 1721
 SPECTRUM_HEIGHT = 129
 spectrograms = np.ndarray((0,SPECTRUM_HEIGHT,SPECTRUM_WIDTH))
 for i,window in enumerate(channel_windows):
