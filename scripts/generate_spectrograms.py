@@ -17,7 +17,7 @@ if len(sys.argv) not in (2,4):
 # 	sys.exit(1)
 
 # Read file to get samplerate and numpy array containing the signal 
-(fs, x) = read(sys.argv[1])
+(fs, x) = read("../samples/{}".format(sys.argv[1]))
 
 
 channels = [
@@ -76,9 +76,9 @@ for i,window in enumerate(channel_windows):
 	# plt.close()
 	print "{0:2.0f}%\b\b\b\b".format(100*float(i)/len(channel_windows)),
 	sys.stdout.flush()
-specs = open('{}.specs.npz'.format(sys.argv[1]), 'w')
-bins = open('{}.bins.npz'.format(sys.argv[1]), 'w')
-freqs = open('{}.freqs.npz'.format(sys.argv[1]), 'w')
+specs = open('../temp/{}.specs.npz'.format(sys.argv[1]), 'w')
+bins = open('../temp/{}.bins.npz'.format(sys.argv[1]), 'w')
+freqs = open('../temp/{}.freqs.npz'.format(sys.argv[1]), 'w')
 np.save(specs,spectrograms)
 np.save(bins,bins_static)
 np.save(freqs,freqs_static)

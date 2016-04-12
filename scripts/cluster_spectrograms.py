@@ -10,11 +10,11 @@ if len(sys.argv) < 2:
 	print("usage: python cluster_spectrograms.py spectrogram-file-name target-offset")
 	sys.exit(1)
 
-specs_file = open('{}.specs.npz'.format(sys.argv[1]), 'r')
+specs_file = open('../temp/{}.specs.npz'.format(sys.argv[1]), 'r')
 spectrograms = np.load(specs_file)
-bins_file = open('{}.bins.npz'.format(sys.argv[1]), 'r')
+bins_file = open('../temp/{}.bins.npz'.format(sys.argv[1]), 'r')
 bins = np.load(bins_file)
-freqs_file = open('{}.freqs.npz'.format(sys.argv[1]), 'r')
+freqs_file = open('../temp/{}.freqs.npz'.format(sys.argv[1]), 'r')
 freqs = np.load(freqs_file)
 
 n_samples = spectrograms.shape[0]
