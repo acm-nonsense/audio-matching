@@ -7,9 +7,14 @@ import matplotlib.pyplot as plt
 import pylab
 import sys
 
-if len(sys.argv) < 4:
-	print("usage: python generate_spectrograms.py audio.wav window-length window-interval")
+
+if len(sys.argv) not in (2,4):
+	print("usage: python generate_spectrograms.py audio.wav window-length window-interval\n\
+		or default to 5;1: python generate_spectrograms.py audio.wav")
 	sys.exit(1)
+# elif len(sys.argv) < 4:
+# 	print("usage: python generate_spectrograms.py audio.wav window-length window-interval")
+# 	sys.exit(1)
 
 # Read file to get samplerate and numpy array containing the signal 
 (fs, x) = read(sys.argv[1])
@@ -27,8 +32,14 @@ channel =  np.mean(channels, axis=0)
 N_SAMPLES = np.shape(channel)[0]
 SAMPLE_RATE = 44100
 LENGTH_SECONDS = N_SAMPLES/SAMPLE_RATE
-WINDOW_LENGTH_SECONDS = int(sys.argv[2])
-WINDOW_INTERVAL = int(sys.argv[3]) # In seconds
+
+WINDOW_LENGTH_SECONDS = 5
+WINDOW_INTERVAL = 1
+
+if len(sys.argv) == 4:
+	WINDOW_LENGTH_SECONDS = int(sys.argv[2])
+	WINDOW_INTERVAL = int(sys.argv[3]) # In seconds
+
 WINDOW_LENGTH_SAMPLES = WINDOW_LENGTH_SECONDS * SAMPLE_RATE
 
 channel_windows = []
