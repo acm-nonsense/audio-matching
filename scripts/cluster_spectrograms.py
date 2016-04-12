@@ -2,12 +2,15 @@ import sys
 import numpy as np
 from numpy.linalg import norm
 from sklearn.decomposition import RandomizedPCA
+from sklearn.neighbors import NearestNeighbors as NN
 from sklearn.cluster import MiniBatchKMeans
 from time import time
 import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 if len(sys.argv) < 2:
-	print("usage: python cluster_spectrograms.py spectrogram-file-name target-offset")
+	print("usage: python cluster_spectrograms.py spectrogram-file-name")
 	sys.exit(1)
 
 specs_file = open('{}.specs.npz'.format(sys.argv[1]), 'r')
@@ -58,23 +61,43 @@ n_components = 100
 n_clusters = 60
 
 print("Computing clustering for each PCA projected window...")
-print(spectrograms.shape)
 # sys.exit()
 t0 = time()
 clusterings = map(lambda sample: MiniBatchKMeans(n_clusters=n_clusters).fit(sample).cluster_centers_, spectrograms)
 print("Done in %0.3fs." % (time() - t0))
 
-
-target_window_index = int(sys.argv[2])
-
-print("Computing closest window to specified target window...")
+print("Computing audio self similarity matrix...")
 t0 = time()
-target_clustering = clusterings[target_window_index]
+similarity_matrix = np.ndarray((len(clusterings),len(clusterings)))
+for target_index in range(len(clusterings)):
+	target_clustering = clusterings[target_index]
+	neighbors = NN(n_neighbors=1).fit(target_clustering)
+
+	for i in range(len(clusterings)):
+		# dists, indxs = neighbors.kneighbors(clusterings[i])
+		# similarity_matrix[target_index,i] = norm(dists)
+		similarity_matrix[target_index,i] = norm(clusterings[i] - target_clustering)
+
+target_clustering = clusterings[30]
 distances_to_target_clustering = map(lambda sample_clustering: norm(sample_clustering - target_clustering), clusterings)
 print("Done in %0.3fs." % (time() - t0))
 
+
+print("Patching and normalizing self similarity matrix...")
+t0 = time()
+max = similarity_matrix.max()
+min = similarity_matrix.min()
+similarity_matrix -= min
+similarity_matrix /= (max-min)
+print("Done in %0.3fs." % (time() - t0))
+
+
 # indexed_distances = np.stack((distances_to_target_clustering,np.arange(len(distances_to_target_clustering))),1)
 figure = plt.figure()
-plt.plot(distances_to_target_clustering)
-figure.savefig('../distances.png')
+dists_file = open('distances.npz', 'w')
+np.save(dists_file,distances_to_target_clustering)
+# plt.plot(distances_to_target_clustering)
+# plt.show()
+plt.imshow(similarity_matrix, cmap="inferno",interpolation='none')
+figure.savefig('../similarity_matrix.png')
 plt.close()
