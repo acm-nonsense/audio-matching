@@ -27,6 +27,7 @@ w = spectrograms.shape[2]
 data = spectrograms.reshape((n_samples,h*w))
 n_components = 100
 
+'''
 # print("Extracting the top %d eigensounds from %d windows..." % (n_components, n_samples))
 # t0 = time()
 # pca = RandomizedPCA(n_components=n_components, whiten=True).fit(data)
@@ -57,8 +58,8 @@ n_components = 100
 # t0 = time()
 # pca_projected_data = pca.transform(data)
 # print("Done in %0.3fs." % (time() - t0))
-
-n_clusters = 60
+'''
+n_clusters = 10
 
 print("Computing clustering for each PCA projected window...")
 # sys.exit()
@@ -78,7 +79,7 @@ for target_index in range(len(clusterings)):
 		# similarity_matrix[target_index,i] = norm(dists)
 		similarity_matrix[target_index,i] = norm(clusterings[i] - target_clustering)
 
-target_clustering = clusterings[30]
+target_clustering = clusterings[0]
 distances_to_target_clustering = map(lambda sample_clustering: norm(sample_clustering - target_clustering), clusterings)
 print("Done in %0.3fs." % (time() - t0))
 
@@ -93,11 +94,30 @@ print("Done in %0.3fs." % (time() - t0))
 
 
 # indexed_distances = np.stack((distances_to_target_clustering,np.arange(len(distances_to_target_clustering))),1)
-figure = plt.figure()
+fig = plt.figure()
 dists_file = open('distances.npz', 'w')
 np.save(dists_file,distances_to_target_clustering)
+print similarity_matrix.shape
+
+
+percet = 10
+k = int(similarity_matrix.shape[0]*percet/100.0)
+print("Top %d percentage index" % percet)
+for rIdx in range(similarity_matrix.shape[0]):
+	
+	# Uncomment to print out all elem in a row
+	'''
+	for elem in similarity_matrix[rIdx]:
+	# 	print i,str(elem)
+	# 	i+=1
+	'''
+
+	print("row = %d" % rIdx),
+	print similarity_matrix[rIdx].argsort()[-k:][::-1]
+
+
 # plt.plot(distances_to_target_clustering)
 # plt.show()
-plt.imshow(similarity_matrix, cmap="inferno",interpolation='none')
-figure.savefig('../similarity_matrix.png')
-plt.close()
+# plt.imshow(similarity_matrix, cmap="inferno",interpolation='none')
+# fig.savefig('../similarity_matrix.png')
+# plt.close()
