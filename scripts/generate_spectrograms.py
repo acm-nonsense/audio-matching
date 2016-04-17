@@ -74,7 +74,7 @@ for i,window in enumerate(channel_windows):
 	full_dim_spectrum[0] = spectrum[:129,:1721]
 	spectrograms = np.concatenate((spectrograms,full_dim_spectrum))
 	# plt.close()
-	print "{0:2.0f}%\b\b\b\b".format(100*float(i)/len(channel_windows)),
+	print "{0:2.0%}\b\b\b\b".format(float(i)/len(channel_windows)),
 	sys.stdout.flush()
 specs = open('{}.specs.npz'.format(sys.argv[1]), 'w')
 bins = open('{}.bins.npz'.format(sys.argv[1]), 'w')
