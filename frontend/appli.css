@@ -175,7 +175,7 @@ ol {
 }
 
 .column-one {
-    order: 3;
+    order: 4;
     padding-top: 10px;
 }
 .column-two {
@@ -183,7 +183,7 @@ ol {
     order: 1;
 }
 .column-three {
-    order: 4;
+    order: 3;
     padding-top: 25px;
     background-color: #000;
     color: #fff;
