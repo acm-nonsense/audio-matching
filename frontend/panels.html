@@ -1,0 +1,159 @@
+<link rel="stylesheet" type="text/css" href="appli.css">
+	<div class="container">
+		<div id="center" class="column column-one">
+			<!-- <button onmouseup="window.imageArray = window.imageNames;update();">genre</button> -->
+		</div>
+		<div class="column column-two">
+			<h3>Looking at Song Structure via Audio Similarity</h3>
+			<p class="subtitle">Modi, Jenny, David, Aileen and Stephen</p>
+			<br>
+			<p>For Group 14's A/V visualization, we chose to try and make discoveries about song structure by analyzing similarity in music. Our visualization answers questions like, <em>how do jazz and pop music differ?</em> and <em>how does electronic music's varied influences affect its structure?</em></p>
+			<br>
+			<b>Implementation</b>
+			<p>Our algorithm for finding similarity within a song involves several steps:
+				<ol>
+					<li>Convert audio to WAV</li>
+					<li>Split audio into snippets</li>
+					<li>Create a spectrogram for each snippet</li>
+					<li>Flatten spectrogram into feature vector</li>
+					<li>Perform k-means clustering on vectors</li>
+					<li>Get difference between snippets with NN search</li>
+					<li>Plot differences between all snippets</li>
+				</ol>
+				This creates the images you see in the center panel. In each image, the audio is segmented into similar and dissimilar sections. Lighter colors indicate very similar sections, while darker colors indicate dissimilarity.
+			</p>
+			<p>Our results are somewhat cryptic, but create an aesthetically appealing way to visualize song structure. Repeated choruses stick out in the Pop genre, while Jazz remains largely dark due to its more heterogeneous construction.
+			</p>
+		</div>
+		<div class="column column-three">
+			<h3 id="title"></h3>
+			<em id="genre"></em>
+			<img id="display" src="" />
+			<p id="description"></p>
+		</div>
+</div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="grid.js"></script>
+<script>
+window.viewImage = function (newImage) {
+	document.getElementById('display').src = newImage;
+	newImage = newImage.split('/')[1].split('.')[0];
+	for (image of imageNames) {
+		if (image[0].indexOf(newImage) != -1) {
+			document.getElementById('title').innerHTML = newImage;
+			document.getElementById('genre').innerHTML = image[1];
+			document.getElementById('description').innerHTML = window.genreDescriptions[image[1]];
+		}
+	}
+};
+
+var points = [];
+var rects = [];
+window.genreDescriptions = {
+	"rap": "This genre, featuring more minimalistic beats and backroud instruments with a heavier forcus on vocals has high self-similarity, as much as pop music. Unsurprisingly, the song structures commonly featured in rap music coincide with pop; i.e. the AABA or verse-chorus-bridge structures.",
+	"electronic": "Electronic music owes its character to many genres, from the harcore raw energy of punk to the melodic intensity of pop music and even the rhythms of jazz. Consequently, this genre has somewhat lower self-similarity than others, though not as low as jazz. This is due to the fact that much electronic music features hooks & choruses, decreasing the variation in the peace. Dance music, a particularly popular subgenre in electronic music, is especially fond of repetitive patterns. House takes this even further, with consistent 4x4 beats and slowly moving chord progressions.",
+	"pop": "Pop music, as we all know, is some of the most memorable and 'catchy' music. Therefore, we can expect some higher degree of repetition in order to drill those refrains into our heads. Though 'No' by Meghan Trainor is an obvious outlier, its exoticness is an artifact of another interesting phenomena, which is overcompression in modern pop music. This is where music is robbed of its dynamic range, or the variation between the loud and soft peaks in order to boot overall loudness. This results in our algorithm's failure to differentiate the parts within, since there is hardly any variation in intensity within the piece.",
+	"jazz": "The most diverse genre, jazz follows fewer steadfast rules than other genres and hence is most varied. Though there are some bright peaks indicating self-similarity, they are less sustained and intense, as jazz tends to have motifs, or short musical phrases that are 'referred to' in a piece rather than identical choruses."
+}
+window.imageNames = [
+	["2-dead-6-wounded, father.png","rap"],
+	["bonfire, childish gambino.png","rap"],
+	["empire-state-of-mind, jay z.png","rap"],
+	["heard-em-say, kanye west.png","rap"],
+	["hive, earl sweatshirt.png","rap"],
+
+	["a-little-max, duke ellington.png","jazz"],
+	["linus-and-lucy, vince guaraldi.png","jazz"],
+	["i-wanna-be-like-you, louis prima.png","jazz"],
+	["so-what, miles davis.png","jazz"],
+	["the-natives-are-restless-tonight, horace silver.png","jazz"],
+
+	["animals, martin garrix.png","electronic"],
+	["cozza-frenzy, bassnectar.png","electronic"],
+	["ghosts-n-stuff, deadmau5.png","electronic"],
+	["obedear, purity ring.png","electronic"],
+	["scary-monsters-and-nice-sprites, skrillex.png","electronic"],
+	["sleepless, flume.png","electronic"],
+
+	["hands-to-myself, selena gomez.png","pop"],
+	["love-yourself, justin bieber.png","pop"],
+	["no, meghan trainor.png","pop"],
+	["one-call-away, charlie pruth.png","pop"],
+	["party-in-the-usa, miley cyrus.png","pop"],
+	["pillowtalk, zayn.png","pop"]
+];
+window.imageArray = imageNames
+
+// window.imageNamesAlt = [
+// 	["no.png","pop"],
+// 	["empire-state-of-mind.png","pop"],
+// 	["heard-em-say.png","pop"],
+// 	["2-dead-6-wounded.png","pop"],
+// 	["pillowtalk.png","pop"],
+// 	["hive.png","pop"],
+// 	["sleepless.png","pop"],
+// 	["hands-to-myself.png","pop"],
+// 	["love-yourself.png","pop"],
+// 	["party-in-the-usa.png","pop"],
+// 	["one-call-away.png","pop"],
+// 	["ghosts-n-stuff.png","pop"],
+// 	["bonfire.png","pop"],
+// 	["obedear.png","pop"],
+// 	["scary-monsters-and-nice-sprites.png","pop"],
+// 	["the-natives-are-restless-tonight.png","pop"],
+// 	["animals.png","pop"],
+// 	["a-little-max.png","pop"],
+// 	["cozza-frenzy.png","pop"],
+// 	["linus-and-lucy.png","pop"],
+// 	["i-wanna-be-like-you.png","pop"],
+// 	["so-what.png","pop"],
+// ];
+
+var width = window.innerWidth/3-50,
+	height = window.innerHeight-50;
+
+var rectGrid = d3.layout.grid()
+  .bands()
+  .size([width, height])
+  .padding([0.12, 0.12])
+  .cols(4);
+
+var svg = d3.select("#center").append("svg")
+  .attr({
+	width: width,
+	height: height+25
+  })
+  .append("g").attr("transform", "translate(0,25)");
+
+function update() {
+	console.log("opdating")
+	rects = [];
+  for (var image of window.imageArray) {
+  	console.log('a')
+	rects.push({filename:"images/"+image[0], genre:image[1]});
+  }
+  var rect = svg.selectAll(".rect")
+	.data(rectGrid(rects));
+  rect.enter().append('image')
+	.attr('xlink:href',function (d) {return d.filename;})
+	.attr("class", "rect")
+	.attr("data-index",function (d) {return d.filename;})
+	.attr("width", rectGrid.nodeSize()[0])
+	.attr("height", rectGrid.nodeSize()[1])
+	.attr("transform", function(d) { return "translate(" + (d.x)+ "," + d.y + ")"; })
+	.attr("onmouseup",function (d) {
+		return "window.viewImage(this.getAttribute('data-index'));";
+	});
+  rect.enter().append('text').text(function (d) { return d.genre });
+
+  rect.transition()
+	.attr("width", rectGrid.nodeSize()[0])
+	.attr("height", rectGrid.nodeSize()[1])
+	.attr("transform", function(d) { return "translate(" + (d.x)+ "," + d.y + ")"; })
+	.style("opacity", 1);
+  rect.exit().transition()
+	.remove();
+}
+update();
+window.viewImage('images/scary-monsters-and-nice-sprites, skrillex.png');
+</script>
