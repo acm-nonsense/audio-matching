@@ -44,14 +44,14 @@ WINDOW_LENGTH_SECONDS = 5
 WINDOW_INTERVAL = 1
 
 if len(sys.argv) == 4:
-	WINDOW_LENGTH_SECONDS = int(sys.argv[2])
-	WINDOW_INTERVAL = int(sys.argv[3]) # In seconds
+	WINDOW_LENGTH_SECONDS = float(sys.argv[2])
+	WINDOW_INTERVAL = float(sys.argv[3]) # In seconds
 
-WINDOW_LENGTH_SAMPLES = WINDOW_LENGTH_SECONDS * SAMPLE_RATE
+WINDOW_LENGTH_SAMPLES = int(WINDOW_LENGTH_SECONDS * SAMPLE_RATE)
 
 channel_windows = []
-for i in range(LENGTH_SECONDS/WINDOW_INTERVAL-WINDOW_LENGTH_SECONDS):
-	channel_windows.append(channel[SAMPLE_RATE*i:SAMPLE_RATE*(i+WINDOW_LENGTH_SECONDS)])
+for i in range(int(LENGTH_SECONDS/WINDOW_INTERVAL-WINDOW_LENGTH_SECONDS)):
+	channel_windows.append(channel[SAMPLE_RATE*i:SAMPLE_RATE*int(i+WINDOW_LENGTH_SECONDS)])
 
 print("Created channel windows.")
 
@@ -136,7 +136,7 @@ n_components = 100
 # pca_projected_data = pca.transform(data)
 # print("Done in %0.3fs." % (time() - t0))
 
-n_clusters = 60
+n_clusters = 10
 
 print("Computing clustering for each PCA projected window...")
 # sys.exit()
@@ -152,9 +152,9 @@ for target_index in range(len(clusterings)):
 	neighbors = NN(n_neighbors=1).fit(target_clustering)
 
 	for i in range(len(clusterings)):
-		# dists, indxs = neighbors.kneighbors(clusterings[i])
-		# similarity_matrix[target_index,i] = norm(dists)
-		similarity_matrix[target_index,i] = norm(clusterings[i] - target_clustering)
+		dists, indxs = neighbors.kneighbors(clusterings[i])
+		similarity_matrix[target_index,i] = norm(dists)
+		# similarity_matrix[target_index,i] = norm(clusterings[i] - target_clustering)
 
 target_clustering = clusterings[30]
 distances_to_target_clustering = map(lambda sample_clustering: norm(sample_clustering - target_clustering), clusterings)
