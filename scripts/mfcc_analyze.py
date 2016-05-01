@@ -3,6 +3,7 @@ from features import logfbank
 
 import scipy.io.wavfile as wav
 import numpy as np
+import numpy.linalg as la
 import matplotlib.pyplot as plt
 
 import sys
@@ -24,13 +25,13 @@ w = 10
 print("Computing similarity matrix...")
 t0 = time()
 sig_length = len(mfcc_feat)
-similarity_matrix = np.ndarray((sig_length,sig_length))
+similarity_matrix = np.ndarray((sig_length/w,sig_length/w))
 for i in range(sig_length/w):
 	for j in range(sig_length/w):
 		entry = 0
 		for k in range(w):
-			entry += np.dot(mfcc_feat[i*w+k,:],mfcc_feat[j*w+k,:])
-		similarity_matrix[i*w:i*w+w,j*w:j*w+w] = entry/float(w) 
+			entry += np.dot(mfcc_feat[i*w+k,:],mfcc_feat[j*w+k,:])/(la.norm(mfcc_feat[i*w+k,:])*la.norm(mfcc_feat[j*w+k,:]))
+		similarity_matrix[i:i+w,j:j+w] = entry/float(w) 
 		print "{0:2.0f}%\b\b\b\b".format(100*float(i*w*sig_length+j*w)/float(sig_length*sig_length)),
 		# print(i*wlen(mfcc_feat)+j*w)
 		# print(float(len(mfcc_feat)*len(mfcc_feat)))
@@ -49,6 +50,7 @@ print("Visualizing similarity matrix...")
 t0 = time()
 figure = plt.figure()
 plt.title(sys.argv[1])
-plt.imshow(similarity_matrix, cmap="gray",interpolation='none')
+plt.imshow(similarity_matrix, cmap="gray",interpolation='none',origin='lower')
+#plt.show()
 figure.savefig(sys.argv[1][:-4]+"_w_"+str(w)+".png")
 print("Done in %0.3fs." % (time() - t0))
