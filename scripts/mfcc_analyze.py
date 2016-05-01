@@ -31,6 +31,7 @@ for i in range(sig_length/w):
 		entry = 0
 		for k in range(w):
 			entry += np.dot(mfcc_feat[i*w+k,:],mfcc_feat[j*w+k,:])/(la.norm(mfcc_feat[i*w+k,:])*la.norm(mfcc_feat[j*w+k,:]))
+			#entry += np.dot(mfcc_feat[i*w+k,:],mfcc_feat[j*w+k,:])
 		similarity_matrix[i:i+w,j:j+w] = entry/float(w) 
 		print "{0:2.0f}%\b\b\b\b".format(100*float(i*w*sig_length+j*w)/float(sig_length*sig_length)),
 		# print(i*wlen(mfcc_feat)+j*w)
