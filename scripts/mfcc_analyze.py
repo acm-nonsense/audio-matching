@@ -10,6 +10,10 @@ import sys
 from time import time
 import warnings
 
+# actually, we're not computing the cross-dot=products, just the diagonals (w sums)... so maybe we can try doing that 
+# Should take an audio file, compute the mfcc (which is basically a feature vector), then computes the similarity matrix with square dimensions (dim(mfcc)/w)-squared by averaging over every cross=dot=product for a window of size w
+# thus, there are w*w sums
+
 w = 10
 audio_file = sys.argv[1]
 
@@ -43,23 +47,27 @@ def compute_similarity_matrix(mfcc_feat):
         print("Done in %0.3fs." % (time() - t0))
         return similarity_matrix
                     
+def normalize_matrix(input_matrix):
+        print("Normalizing similarity matrix...")
+        t0 = time()
+        max = input_matrix.max()
+        min = input_matrix.min()
+        input_matrix -= min
+        input_matrix /= (max-min)
+        print("Done in %0.3fs." % (time() - t0))
+        return input_matrix
+
+def save_matrix(input_matrix):
+    print("Visualizing similarity matrix...")
+    t0 = time()
+    figure = plt.figure()
+    plt.title(audio_file)
+    plt.imshow(input_matrix, cmap="gray",interpolation='none',origin='lower')
+    #plt.show()
+    figure.savefig(audio_file[:-4]+"_w_"+str(w)+".png")
+    print("Done in %0.3fs." % (time() - t0))
+
 mfcc_feat = compute_mfcc()
 similarity_matrix = compute_similarity_matrix(mfcc_feat)
-
-
-print("Normalizing similarity matrix...")
-t0 = time()
-max = similarity_matrix.max()
-min = similarity_matrix.min()
-similarity_matrix -= min
-similarity_matrix /= (max-min)
-print("Done in %0.3fs." % (time() - t0))
-
-print("Visualizing similarity matrix...")
-t0 = time()
-figure = plt.figure()
-plt.title(audio_file)
-plt.imshow(similarity_matrix, cmap="gray",interpolation='none',origin='lower')
-#plt.show()
-figure.savefig(audio_file[:-4]+"_w_"+str(w)+".png")
-print("Done in %0.3fs." % (time() - t0))
+normalized_matrix = normalize_matrix(similarity_matrix)
+save_matrix(normalized_matrix)
