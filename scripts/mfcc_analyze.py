@@ -10,17 +10,18 @@ import sys
 from time import time
 import warnings
 
+w = 10
+audio_file = sys.argv[1]
 
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 
 print("Computing MFCCs...")
 t0 = time()
-(rate,sig) = wav.read(sys.argv[1])
+(rate,sig) = wav.read(audio_file)
 mfcc_feat = mfcc(sig,rate)
-fbank_feat = logfbank(sig,rate)
+#fbank_feat = logfbank(sig,rate)
 print("Done in %0.3fs." % (time() - t0))
 
-w = 10
 
 print("Computing similarity matrix...")
 t0 = time()
@@ -50,8 +51,8 @@ print("Done in %0.3fs." % (time() - t0))
 print("Visualizing similarity matrix...")
 t0 = time()
 figure = plt.figure()
-plt.title(sys.argv[1])
+plt.title(audio_file)
 plt.imshow(similarity_matrix, cmap="gray",interpolation='none',origin='lower')
 #plt.show()
-figure.savefig(sys.argv[1][:-4]+"_w_"+str(w)+".png")
+figure.savefig(audio_file[:-4]+"_w_"+str(w)+".png")
 print("Done in %0.3fs." % (time() - t0))
