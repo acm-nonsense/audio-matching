@@ -25,7 +25,8 @@ def compute_mfcc():
     print("\tComputing MFCCs...")
     t0 = time()
     (rate,sig) = wav.read(audio_file)
-    sig = sig[0:rate*file_head_length,:] # delete this after testing
+    if file_head_length != 0: # just take the first file_head_length seconds of the audio file
+        sig = sig[0:rate*file_head_length,:] # delete this after testing
     mfcc_feat = mfcc(sig,rate)
     #fbank_feat = logfbank(sig,rate) # potentially look at this later?
     print("\tDone in %0.3fs." % (time() - t0))
@@ -56,7 +57,7 @@ def standardize_matrix(input_matrix):
     matrix_mean = mean(input_matrix)
     matrix_std = std(input_matrix)
     input_matrix = (input_matrix-matrix_mean)/matrix_std
-    print("\tDone in %0.3fs." % (time() - t0))
+    print("\tDone in %0.3fs." % (jime() - t0))
     return input_matrix
 
 def normalize_matrix(input_matrix):
@@ -72,12 +73,14 @@ def normalize_matrix(input_matrix):
 def save_matrix(input_matrix):
     print("\tVisualizing similarity matrix...")
     t0 = time()
+    # are we losing information if we try to cluster directly on the images? http://stackoverflow.com/questions/24185083/change-resolution-of-imshow-in-ipython
+    #figure = plt.figure(figsize = (44100*sampling_window_length/1000,44100*sampling_window_length/1000))
     figure = plt.figure()
     plt.title(audio_file)
     plt.imshow(input_matrix, cmap="gray",interpolation='none',origin='lower')
     #plt.show()
     #figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+".png")
-    figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+"-_head_length_"+str(file_head_length)+".png")
+    figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+"_head_length_"+str(file_head_length)+".png")
     print("\tDone in %0.3fs." % (time() - t0))
 
 def main():
