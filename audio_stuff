@@ -1,0 +1,78 @@
+audio stuff
+
+
+
+todo
+	iterate over a directory
+	allow between different songs
+	create own sound files
+	optimize w/ c++?
+
+
+maximum likelihood estimation?
+
+
+
+
+
+
+
+looking at different bands of frequency
+
+
+generating music from self-similarity matrix - can't
+	given self-similarity, give it a sample and create new audio (should do with spectrograms)
+
+is clustering on self-similarity matrices good enough or are losing important about the structure of a song
+	looking at average pixel densities
+	looking at self-similarity matrices of different bands of frequenceies
+
+
+
+
+changing computation of similarity matrix by doing cross-dot-products and different scalings
+
+
+
+actually trying to compute the autocorrelation instead of just the dot product (as in the discrete sum over the interval)
+	should do along diagonal of window and also all of the cross
+
+try doing this shit with generated sounds... each part should be exactly similar with itself, but depending on how the mfccs are generated, since we're just taking the dot products, lower intensities might not register as similar even if they are...
+
+
+
+papers
+	musanim
+		To calculate the similarity between two audio
+		“instants,” they are first parameterized into Melfrequency
+		cepstral coefficients (MFCCs) plus an
+		energy term. Figure 2 shows the steps in
+		parameterizing an audio waveform.
+			Hamming Windowed
+			For each window, the log of the power spectrum is computed using a discrete Fourier transform (DFT)
+			Mel-scaling emphasizes mid-frequency bands in proportion to their perceptual importance.
+			The final stage is to further transform the Mel-weighted spectrum (using another DFT) into “cepstral” coefficients. This results in features that are reasonably dimensionally uncorrelated, thus the final DFT is a good approximation of the Karhunen-Loeve transformation of the Mel spectra. 
+			The high-order MFC coefficients are discarded, leaving the 12 lower-order MFCCs
+
+		MFCC parameterization discards pitch information.
+
+		 A better
+		way to characterize the MFCC transformation is as a
+		lowpass “lifter” or frequency-domain filter. In this
+		view, MFCCs are a smoothed representation of a
+		sound’s frequency spectrum.
+
+		 Clearly, work is
+		needed on investigating parameterizations, similarity
+		measures, and the effect of window size on the
+		visualizations.
+
+		A very attractive possibility is the automatic determination of tempo
+			Given the audio of a particular performance and a MIDI file representation of the same piece, it would be possible to warp the similarity matrix from the knowntempo MIDI rendition to match that of the original performance. 
+				The warping function would then serve as a tempo map, allowing the MIDI file to be played back with the tempo of the original performance. 
+
+	music classification 
+		background
+			the items are audio signals
+			their characteristics are the features we extract from them (MFCC, chroma, centroid)
+			the classes (e.g. instruments, genres, chords) fit the problem definition
