@@ -1,5 +1,5 @@
-from features import mfcc
-from features import logfbank
+from python_speech_features.features.base import mfcc
+from python_speech_features.features.base import logfbank
 
 import scipy.io.wavfile as wav
 import numpy as np
