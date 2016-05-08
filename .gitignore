@@ -3,5 +3,4 @@
 spectrograms/*
 .mp3
 .npz
-README.txt
-CONTRIBUTIONS.txt
+samples/*
