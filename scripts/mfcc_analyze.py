@@ -80,6 +80,7 @@ def save_matrix(input_matrix):
     plt.imshow(input_matrix, cmap="gray",interpolation='none',origin='lower')
     #plt.show()
     #figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+".png")
+    np.save(open("matrix.npz",'w'),input_matrix)
     figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+"_head_length_"+str(file_head_length)+".png")
     print("\tDone in %0.3fs." % (time() - t0))
 
