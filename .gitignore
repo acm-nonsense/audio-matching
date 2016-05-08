@@ -3,3 +3,4 @@
 spectrograms/*
 .mp3
 .npz
+samples/*
