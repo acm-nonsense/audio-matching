@@ -32,6 +32,16 @@ def compute_mfcc():
     print("\tDone in %0.3fs." % (time() - t0))
     return mfcc_feat
 
+def standardize_mfcc_features(mfcc_features):
+    print("\tStandardizing MFCC Features...")
+    t0 = time()
+    feature_means = mean(mfcc_features)
+    feature_stds = std(mfcc_features)
+    standardized_features = (mfcc_features-feature_means)/feature_stds
+    print("\tDone in %0.3fs." % (time() - t0))
+    return standardized_features
+    
+
 def compute_similarity_matrix(mfcc_feat):
     print("\tComputing similarity matrix...")
     t0 = time()
@@ -83,11 +93,14 @@ def save_matrix(input_matrix):
     figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+"_head_length_"+str(file_head_length)+".png")
     print("\tDone in %0.3fs." % (time() - t0))
 
-def main():
+def save_mfcc_similarity_matrix():
     mfcc_feat = compute_mfcc()
     similarity_matrix = compute_similarity_matrix(mfcc_feat)
     normalized_matrix = normalize_matrix(similarity_matrix)
     save_matrix(normalized_matrix)
+    
+def main():
+    save_mfcc_similarity_matrix()
     
 if __name__ == "__main__":
     main()
