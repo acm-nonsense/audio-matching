@@ -3,7 +3,7 @@
 ## Running Stuff
 
 ### Similarity Matrices
-in the root project directory: python2 scripts/mfcc_analyze.py samples/layers.wav`
+in the root project directory: `python2 scripts/mfcc_analyze.py samples/layers.wav`
 
 
 
