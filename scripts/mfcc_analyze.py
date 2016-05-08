@@ -17,7 +17,7 @@ import warnings
 #w = 10
 sampling_window_length = 10
 audio_file = sys.argv[1]
-file_head_length = 10 # in seconds
+file_head_length = 0 # in seconds
 
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 
