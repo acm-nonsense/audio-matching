@@ -22,27 +22,6 @@ file_head_length = 10 # in seconds
 
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 
-
-def compute_mfcc(path):
-    print("\tComputing MFCCs...")
-    t0 = time()
-    (rate,sig) = wav.read(path)
-    if file_head_length != 0: # just take the first file_head_length seconds of the audio file
-        sig = sig[0:rate*file_head_length,:] # delete this after testing
-    mfcc_feat = mfcc(sig,rate)
-    #fbank_feat = logfbank(sig,rate) # potentially look at this later?
-    print("\tDone in %0.3fs." % (time() - t0))
-    return mfcc_feat
-
-def standardize_mfcc_features(mfcc_features):
-    print("\tStandardizing MFCC Features...")
-    t0 = time()
-    feature_means = mean(mfcc_features)
-    feature_stds = std(mfcc_features)
-    standardized_features = (mfcc_features-feature_means)/feature_stds
-    print("\tDone in %0.3fs." % (time() - t0))
-    return standardized_features
-
 def compute_similarity_matrix(mfcc_feat):
     print("\tComputing similarity matrix...")
     t0 = time()
@@ -54,14 +33,14 @@ def compute_similarity_matrix(mfcc_feat):
                     for k in range(sampling_window_length):
                             entry += np.dot(mfcc_feat[i*sampling_window_length+k,:],mfcc_feat[j*sampling_window_length+k,:])/(la.norm(mfcc_feat[i*sampling_window_length+k,:])*la.norm(mfcc_feat[j*sampling_window_length+k,:]))
                             #entry += np.dot(mfcc_feat[i*sampling_window_length+k,:],mfcc_feat[j*sampling_window_length+k,:])
-                    similarity_matrix[i:i+sampling_window_length,j:j+sampling_window_length] = entry/float(sampling_window_length) 
+                    similarity_matrix[i:i+sampling_window_length,j:j+sampling_window_length] = entry/float(sampling_window_length)
                     print "\t{0:2.0f}%\b\b\b\b\b".format(100*float(i*sampling_window_length*sig_length+j*sampling_window_length)/float(sig_length*sig_length)),
                     # print(i*wlen(mfcc_feat)+j*sampling_window_length)
                     # print(float(len(mfcc_feat)*len(mfcc_feat)))
                     sys.stdout.flush()
     print("\tDone in %0.3fs." % (time() - t0))
     return similarity_matrix
- 
+
 def standardize_matrix(input_matrix):
     print("\tStandardizing similarity matrix...")
     t0 = time()
@@ -98,23 +77,19 @@ def save_matrix(input_matrix,audio_file):
     print("\tDone in %0.3fs." % (time() - t0))
 
 def save_mfcc_similarity_matrix(path):
-    mfcc_feat = compute_mfcc(path)
-    similarity_matrix = compute_similarity_matrix(mfcc_feat)
-    normalized_matrix = normalize_matrix(similarity_matrix)
-    save_matrix(normalized_matrix,path)
+    with np.load(path) as mfcc_feat_file:
+        mfcc_feat = mfcc_feat_file['arr_0']
+        similarity_matrix = compute_similarity_matrix(mfcc_feat)
+        normalized_matrix = normalize_matrix(similarity_matrix)
+        save_matrix(normalized_matrix,path)
 
 def main():
     global output_images
-    print sys.argv[2]
     if sys.argv[2] == "img":
         output_images = True
-    if os.path.isdir(sys.argv[1]):
-        files = os.listdir(sys.argv[1])
-        for item in files:
-            if item[-4:] == ".wav":
-                save_mfcc_similarity_matrix(os.path.join(sys.argv[1],item))
-    else:
-        save_mfcc_similarity_matrix(sys.argv[1])
+    files = os.listdir(os.path.join(sys.argv[1],"npz","mfcc"))
+    for item in files:
+        save_mfcc_similarity_matrix(os.path.join(sys.argv[1],"npz","mfcc",item))
 
 if __name__ == "__main__":
     main()
