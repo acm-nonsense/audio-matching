@@ -57,9 +57,10 @@ def generate_mfcc(input_file_path, output_file_path, standardize_flag):
 
 def generate_all_mfccs(input_dir_path, output_dir_path,standardize_flag):
     for target_file in os.listdir(input_dir_path):
-       input_file_path = os.path.join(input_dir_path,target_file)
-       output_file_path = os.path.join(output_dir_path,"npz","mfcc",target_file[:-4]+".npz")
-       generate_mfcc(input_file_path,output_file_path,standardize_flag)
+        if target_file[-4:] == ".wav":
+            input_file_path = os.path.join(input_dir_path,target_file)
+            output_file_path = os.path.join(output_dir_path,"npz","mfcc",target_file[:-4]+".npz")
+            generate_mfcc(input_file_path,output_file_path,standardize_flag)
 
 '''
 Inputs: source_path
@@ -75,7 +76,12 @@ if __name__ == "__main__":
 
     source_path = sys.argv[1]
     output_path = sys.argv[2]
-        
+    if not os.path.exists(os.path.join(output_path,"npz")):
+        os.mkdir(os.path.join(output_path,"npz"))
+    if not os.path.exists(os.path.join(output_path,"npz","mfcc")):
+        os.mkdir(os.path.join(output_path,"npz","mfcc"))
+    if not os.path.exists(os.path.join(output_path,"img")):
+        os.mkdir(os.path.join(output_path,"img"))
     if len(sys.argv) == 4:
         standardize_flag = (sys.argv[3] == 't')
         generate_all_mfccs(source_path,output_path,standardize_flag)
