@@ -1,3 +1,6 @@
--scipy==0.17.0
--matplotlib==1.5.1
--scikit-learn==0.17.1
+scipy==0.17.0
+matplotlib==1.5.1
+scikit-learn==0.17.1
+#Need to install pip install -r https://raw.githubusercontent.com/aigamedev/scikit-neuralnetwork/master/requirements.txt
+# git clone https://github.com/aigamedev/scikit-neuralnetwork.git
+# cd scikit-neuralnetwork; python setup.py develop
