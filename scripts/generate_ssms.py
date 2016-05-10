@@ -67,8 +67,8 @@ def save_matrix(input_matrix,audio_file):
     #figure = plt.figure(figsize = (44100*sampling_window_length/1000,44100*sampling_window_length/1000))
     #plt.show()
     #figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+".png")
-    filename = audio_file[:-4]
-    np.save(open(filename+".npz",'w'),input_matrix)
+    filename = audio_file[:-9]
+    np.save(open(filename+".assm.npz",'w'),input_matrix)
     if output_images:
         figure = plt.figure()
         plt.title(audio_file)
@@ -87,9 +87,10 @@ def main():
     global output_images
     if sys.argv[2] == "img":
         output_images = True
-    files = os.listdir(os.path.join(sys.argv[1],"npz","mfcc"))
+    files = os.listdir(os.path.join(sys.argv[1],"npz"))
     for item in files:
-        save_mfcc_similarity_matrix(os.path.join(sys.argv[1],"npz","mfcc",item))
+        if item[-8:-4] == "mfcc":
+            save_mfcc_similarity_matrix(os.path.join(sys.argv[1],"npz",item))
 
 if __name__ == "__main__":
     main()
