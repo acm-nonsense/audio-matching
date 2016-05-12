@@ -18,7 +18,7 @@ import warnings
 #w = 10
 output_images = False
 sampling_window_length = 10
-file_head_length = 10 # in seconds
+file_head_length = 0 # in seconds
 
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 
@@ -26,17 +26,18 @@ def compute_similarity_matrix(mfcc_feat):
     print("\tComputing similarity matrix...")
     t0 = time()
     sig_length = len(mfcc_feat)
+    sig_item_length = len(mfcc_feat[0])
+    print(sig_item_length)
+    print(sig_length)
+    mflat = mfcc_feat.reshape(sig_item_length*sig_length)
     similarity_matrix = np.ndarray((sig_length/sampling_window_length,sig_length/sampling_window_length))
     for i in range(sig_length/sampling_window_length):
             for j in range(sig_length/sampling_window_length):
-                    entry = 0
-                    for k in range(sampling_window_length):
-                            entry += np.dot(mfcc_feat[i*sampling_window_length+k,:],mfcc_feat[j*sampling_window_length+k,:])/(la.norm(mfcc_feat[i*sampling_window_length+k,:])*la.norm(mfcc_feat[j*sampling_window_length+k,:]))
-                            #entry += np.dot(mfcc_feat[i*sampling_window_length+k,:],mfcc_feat[j*sampling_window_length+k,:])
+                    entry_l = mflat[i*sampling_window_length*sig_item_length:(i*sampling_window_length+sampling_window_length)*sig_item_length]
+                    entry_r = mflat[j*sampling_window_length*sig_item_length:(j*sampling_window_length+sampling_window_length)*sig_item_length]
+                    entry = np.dot(entry_l,entry_r)/(la.norm(entry_l)*la.norm(entry_r))
                     similarity_matrix[i:i+sampling_window_length,j:j+sampling_window_length] = entry/float(sampling_window_length)
                     print "\t{0:2.0f}%\b\b\b\b\b".format(100*float(i*sampling_window_length*sig_length+j*sampling_window_length)/float(sig_length*sig_length)),
-                    # print(i*wlen(mfcc_feat)+j*sampling_window_length)
-                    # print(float(len(mfcc_feat)*len(mfcc_feat)))
                     sys.stdout.flush()
     print("\tDone in %0.3fs." % (time() - t0))
     return similarity_matrix
@@ -68,7 +69,7 @@ def save_matrix(input_matrix,audio_file):
     #plt.show()
     #figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+".png")
     filename = audio_file[:-9]
-    np.save(open(filename+".assm.npz",'w'),input_matrix)
+    np.savez(open(filename+".assm.npz",'w'),input_matrix)
     if output_images:
         figure = plt.figure()
         plt.title(audio_file)
