@@ -20,6 +20,7 @@ sampling_window_length = 10
 file_head_length = 10 # in seconds
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 
+
 def compute_mfcc(audio_file):
     print("\tComputing MFCCs...")
     t0 = time()
