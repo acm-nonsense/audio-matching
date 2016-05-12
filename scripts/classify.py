@@ -40,9 +40,9 @@ def main():
     l_pred =  predict_labels(v_test,train_model(v_train,l_train))
     print accuracy_score(l_test,l_pred)
     cm =  confusion_matrix(l_test,l_pred)
-    plt.figure()
-    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    plt.show()
+    #plt.figure()
+    #plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    #plt.show()
 
 if __name__ == "__main__":
     main()
