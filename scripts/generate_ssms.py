@@ -21,7 +21,7 @@ sampling_window_length = 10
 file_head_length = 0 # in seconds
 
 warnings.filterwarnings("ignore", category=wav.WavFileWarning)
-
+index = 0
 def compute_similarity_matrix(mfcc_feat):
     print("\tComputing similarity matrix...")
     t0 = time()
@@ -30,15 +30,27 @@ def compute_similarity_matrix(mfcc_feat):
     print(sig_item_length)
     print(sig_length)
     mflat = mfcc_feat.reshape(sig_item_length*sig_length)
+    batch_count = sig_length/sampling_window_length
+    op_arr = np.ndarray((batch_count*batch_count,sampling_window_length*sig_item_length*2))
     similarity_matrix = np.ndarray((sig_length/sampling_window_length,sig_length/sampling_window_length))
-    for i in range(sig_length/sampling_window_length):
-            for j in range(sig_length/sampling_window_length):
-                    entry_l = mflat[i*sampling_window_length*sig_item_length:(i*sampling_window_length+sampling_window_length)*sig_item_length]
-                    entry_r = mflat[j*sampling_window_length*sig_item_length:(j*sampling_window_length+sampling_window_length)*sig_item_length]
-                    entry = np.dot(entry_l,entry_r)/(la.norm(entry_l)*la.norm(entry_r))
-                    similarity_matrix[i:i+sampling_window_length,j:j+sampling_window_length] = entry/float(sampling_window_length)
-                    print "\t{0:2.0f}%\b\b\b\b\b".format(100*float(i*sampling_window_length*sig_length+j*sampling_window_length)/float(sig_length*sig_length)),
-                    sys.stdout.flush()
+    for i in range(batch_count):
+        for j in range(batch_count):
+            op_arr[i*batch_count+j,:sampling_window_length*sig_item_length] = mflat[i*sampling_window_length*sig_item_length:(i*sampling_window_length+sampling_window_length)*sig_item_length]
+            op_arr[i*batch_count+j,sampling_window_length*sig_item_length:] = mflat[j*sampling_window_length*sig_item_length:(j*sampling_window_length+sampling_window_length)*sig_item_length]
+
+    #index = 0
+    def ssm_item(batch):
+        global index
+        entry_l = batch[:len(batch)/2]
+        entry_r = batch[len(batch)/2:]
+        entry = np.dot(entry_l,entry_r)/(la.norm(entry_l)*la.norm(entry_r))
+        i = index/batch_count
+        j = index%batch_count
+        similarity_matrix[i:i+sampling_window_length,j:j+sampling_window_length] = entry/float(sampling_window_length)
+        index += 1
+        #print "\t{0:2.0f}%\b\b\b\b\b".format(100*float(i*sampling_window_length*sig_length+j*sampling_window_length)/float(sig_length*sig_length)),
+        #sys.stdout.flush()
+    map(ssm_item,op_arr)
     print("\tDone in %0.3fs." % (time() - t0))
     return similarity_matrix
 

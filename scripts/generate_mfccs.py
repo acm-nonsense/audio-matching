@@ -23,10 +23,11 @@ warnings.filterwarnings("ignore", category=wav.WavFileWarning)
 def compute_mfcc(audio_file):
     print("\tComputing MFCCs...")
     t0 = time()
-    print audio_file
     (rate,sig) = wav.read(audio_file)
+    if len(sig.shape) > 1:
+        sig = np.mean(sig,axis=1) # Then we have stero channels and we need to flatten them
     if file_head_length != 0: # just take the first file_head_length seconds of the audio file
-        sig = sig[0:rate*file_head_length,:] # delete this after testing
+        sig = sig[0:rate*file_head_length] # delete this after testing
     mfcc_feat = mfcc(sig,rate)
     #fbank_feat = logfbank(sig,rate) # potentially look at this later?
     print("\tDone in %0.3fs." % (time() - t0))
