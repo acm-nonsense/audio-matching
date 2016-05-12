@@ -56,8 +56,8 @@ def compute_similarity_matrix(mfcc_feat):
 def standardize_matrix(input_matrix):
     #print("\tStandardizing similarity matrix...")
     #t0 = time()
-    matrix_mean = mean(input_matrix)
-    matrix_std = std(input_matrix)
+    matrix_mean = np.mean(input_matrix)
+    matrix_std = np.std(input_matrix)
     input_matrix = (input_matrix-matrix_mean)/matrix_std
     #print("\tDone in %0.3fs." % (jime() - t0))
     return input_matrix
