@@ -10,6 +10,7 @@ import os
 import sys
 from time import time
 import warnings
+from multiprocessing import Pool
 
 # actually, we're not computing the cross-dot=products, just the diagonals (sampling_window_length sums)... so maybe we can try doing that 
 # Should take an audio file, compute the mfcc (which is basically a feature vector), then computes the similarity matrix with square dimensions (dim(mfcc)/sampling_window_length)-squared by averaging over every cross=dot=product for a window of size sampling_window_length
@@ -27,8 +28,6 @@ def compute_similarity_matrix(mfcc_feat):
     t0 = time()
     sig_length = len(mfcc_feat)
     sig_item_length = len(mfcc_feat[0])
-    print(sig_item_length)
-    print(sig_length)
     mflat = mfcc_feat.reshape(sig_item_length*sig_length)
     batch_count = sig_length/sampling_window_length
     op_arr = np.ndarray((batch_count*batch_count,sampling_window_length*sig_item_length*2))
@@ -90,20 +89,27 @@ def save_matrix(input_matrix,audio_file):
     print("\tDone in %0.3fs." % (time() - t0))
 
 def save_mfcc_similarity_matrix(path):
-    with np.load(path) as mfcc_feat_file:
+    with np.load(os.path.join(sys.argv[1],"npz",path)) as mfcc_feat_file:
         mfcc_feat = mfcc_feat_file['arr_0']
         similarity_matrix = compute_similarity_matrix(mfcc_feat)
         normalized_matrix = normalize_matrix(similarity_matrix)
         save_matrix(normalized_matrix,path)
 
 def main():
+    print "Starting to generate SSMs..."
+    t0 = time()
     global output_images
     if sys.argv[2] == "img":
         output_images = True
-    files = os.listdir(os.path.join(sys.argv[1],"npz"))
+    files = os.listdir(os.path.join(sys.argv[1],"npz")) 
+    pool = Pool(6)
+    items = []
     for item in files:
         if item[-8:-4] == "mfcc":
-            save_mfcc_similarity_matrix(os.path.join(sys.argv[1],"npz",item))
+            items.append(item)
+    pool.map(save_mfcc_similarity_matrix,items)
+    #map(save_mfcc_similarity_matrix,items)
+    print("\tCompleted in %0.3fs." % (time() - t0))
 
 if __name__ == "__main__":
     main()
