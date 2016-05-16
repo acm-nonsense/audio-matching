@@ -38,8 +38,8 @@ def compute_mfcc(audio_file):
 def standardize_mfcc_features(mfcc_features):
     #print("\tStandardizing MFCC Features...")
     #t0 = time()
-    feature_means = mean(mfcc_features)
-    feature_stds = std(mfcc_features)
+    feature_means = np.mean(mfcc_features)
+    feature_stds = np.std(mfcc_features)
     standardized_features = (mfcc_features-feature_means)/feature_stds
     #print("\tDone in %0.3fs." % (time() - t0))
     return standardized_features

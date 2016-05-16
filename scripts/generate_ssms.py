@@ -81,11 +81,11 @@ def save_matrix(input_matrix,audio_file):
     #figure.savefig(audio_file[:-4]+"_sampling_window_length_"+str(sampling_window_length)+".png")
     filename = audio_file[:-9]
     np.savez(open(os.path.join(sys.argv[1],"npz",filename+".assm.npz"),'w'),input_matrix)
-    if output_images:
-        figure = plt.figure()
-        plt.title(audio_file)
-        plt.imshow(input_matrix, cmap="gray",interpolation='none',origin='lower')
-        figure.savefig(os.path.join(sys.argv[1],"npz",filename+".png"))
+    #if output_images:
+        #figure = plt.figure()
+        #plt.title(audio_file)
+        #plt.imshow(input_matrix, cmap="gray",interpolation='none',origin='lower')
+        #figure.savefig(os.path.join(sys.argv[1],"npz",filename+".png"))
     #print("\tDone in %0.3fs." % (time() - t0))
     gindex.value += 1
     print "\t{0:2.0f}%\b\b\b\b\b".format(100*gindex.value/op_count.value),

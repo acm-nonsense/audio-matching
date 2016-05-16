@@ -12,10 +12,12 @@ def process_files(output_root):
     values = np.ndarray((len(files),1))
     labels = np.array(["" for _ in range(len(files))],dtype=object)
     for i in range(len(files)):
-        with np.load(os.path.join(output_root,'npz',files[i])) as ssm_file:
-            ssm = ssm_file['arr_0']
-            values[i] = project_on_average(ssm)
-            labels[i] = files[i][:-15]
+        npz_type = files[i][-8:-4]
+        if npz_type == 'assm':
+            with np.load(os.path.join(output_root,'npz',files[i])) as ssm_file:
+                ssm = ssm_file['arr_0']
+                values[i] = project_on_average(ssm)
+                labels[i] = files[i][:-15]
     return (values,labels)
 
 def project_on_average(sim_mat):
