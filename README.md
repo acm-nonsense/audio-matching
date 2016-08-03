@@ -1,11 +1,8 @@
-# 467-audio-matching
+# Using Music Self Similarity Matrices to Identify the Genre of Music
 
-## Running Stuff
+## Abstract
 
-### Similarity Matrices
-in the root project directory: `python2 scripts/mfcc_analyze.py samples/layers.wav`
+We present a novel method of identifying the genre of a song by extracting important features and structure of music and the learning problems associated with this method. Most current methods of genre identizcation rely on identifying the song itself and using the tags associated with the song to identify the genre. Using acoustic properties of the song for genre identizcation is not as common. Our approach uses the acoustic similarity within a song represented as two-dimensional self-similarity matrix by using a quantizable similarity between every two zxed-length windows of time of each song. We use similarities in such matrices to train classizes and make decisions about the genre of the song.
 
-
-
-## Front-end
-acm-nonsense.github.io/467-audio-matching/frontend/panels.html
+## Link To Paper
+acm-nonsense.github.io/audio-matching/paper.pdf
